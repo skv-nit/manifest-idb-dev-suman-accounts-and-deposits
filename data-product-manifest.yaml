@@ -1,0 +1,100 @@
+jobId: "1124"
+jobName: Customer 360
+jobType: Source Aligned Data Product
+developerId: 7679c14a-8908-42a5-8656-2abecbfa4b49
+domain: accounts_deposits
+alias: loading_deposit_account_to_postgres
+discoveryPort:
+  name: Customer 360
+inputPorts:
+  - alias: deposit_account_1
+    isDynamic: true
+    connection: Postgres Connection
+    tableName/query: deposit_account
+    optional:
+      persistDataFrame: false
+      enableDataReconciliation: false
+      enforceSchema: false
+      dataSetUrn: urn:dv:dataset:601d2351-1f5f-4887-b6bc-00657f406950
+      loggingOptions:
+        printSchema: true
+        count: true
+        showData: true
+    type: readPostGreSqlDbUsingJdbc
+productState:
+  isDynamic: true
+  alias: loading_deposit_account_to_postgres
+  retentionVersions: ""
+  logicalSchema:
+    properties:
+      deposit_id:
+        type: STRING
+        description: Primary key, unique identifier for the deposit account
+        sourceColumn: deposit_id
+        sourceTable: public.deposit_account
+      customer_id:
+        type: STRING
+        description: Reference to customer (public.customer.customer_id)
+        sourceColumn: customer_id
+        sourceTable: public.deposit_account
+      product_id:
+        type: STRING
+        description: Reference to deposit product (public.deposit_product.product_id)
+        sourceColumn: product_id
+        sourceTable: public.deposit_account
+      account_number:
+        type: STRING
+        description: Unique deposit account number
+        sourceColumn: account_number
+        sourceTable: public.deposit_account
+      principal_amount:
+        type: STRING
+        description: Principal amount deposited
+        sourceColumn: principal_amount
+        sourceTable: public.deposit_account
+      start_date:
+        type: STRING
+        description: Start date of the deposit
+        sourceColumn: start_date
+        sourceTable: public.deposit_account
+      maturity_date:
+        type: STRING
+        description: Maturity date of the deposit
+        sourceColumn: maturity_date
+        sourceTable: public.deposit_account
+      maturity_amount:
+        type: STRING
+        description: Expected maturity amount of the deposit
+        sourceColumn: maturity_amount
+        sourceTable: public.deposit_account
+  stateStoreType: writeDataFrameToPostgresTable
+  isProfilingEnabled: false
+  updateStrategy: Overwrite
+  connection: Postgres Connection
+  tableName: dw.dp_sadp_deposit_account
+  optional:
+    persistDataFrame: false
+    enableDataReconciliation: false
+    enforceSchema: false
+    loggingOptions:
+      printSchema: true
+      count: true
+      showData: true
+  refreshInterval: 31 12 * * *
+transformation:
+  - isDynamic: true
+    alias: Filter_1
+    description: filtering data based on date
+    sequence: 2
+    inputDataFrame: deposit_account_1
+    filterCondition: start_date > "2022-01-01"
+    isConditionAsJsonString: false
+    optional:
+      persistDataFrame: false
+      loggingOptions:
+        printSchema: true
+        count: true
+        showData: true
+    type: filterTransform
+controlPort:
+  dataQualityRules: {}
