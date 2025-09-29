@@ -1,0 +1,106 @@
+jobId: "1127"
+jobName: Transactions
+jobType: Source Aligned Data Product
+developerId: 7679c14a-8908-42a5-8656-2abecbfa4b49
+domain: accounts_deposits
+alias: load_into_postgres
+discoveryPort:
+  name: Transactions
+inputPorts:
+  - alias: transaction_-_Accounts_and_Deposits_1
+    isDynamic: true
+    connection: Postgres Connection
+    tableName/query: transaction
+    optional:
+      persistDataFrame: false
+      enableDataReconciliation: false
+      enforceSchema: false
+      dataSetUrn: urn:dv:dataset:5e82533b-9c71-49d7-9dcc-54720d42a44b
+      loggingOptions:
+        printSchema: true
+        count: true
+        showData: true
+    type: readPostGreSqlDbUsingJdbc
+productState:
+  isDynamic: true
+  alias: load_into_postgres
+  retentionVersions: ""
+  logicalSchema:
+    properties:
+      txn_id:
+        type: STRING
+        description: Primary key, unique identifier for the transaction
+        sourceColumn: txn_id
+        sourceTable: public.transaction
+      account_id:
+        type: STRING
+        description: Reference to account (public.account.account_id)
+        sourceColumn: account_id
+        sourceTable: public.transaction
+      txn_date:
+        type: DATETIME
+        description: Transaction date and time
+        sourceColumn: txn_date
+        sourceTable: public.transaction
+      txn_type:
+        type: STRING
+        description: Transaction type (Credit/Debit)
+        sourceColumn: txn_type
+        sourceTable: public.transaction
+      amount:
+        type: STRING
+        description: Transaction amount
+        sourceColumn: amount
+        sourceTable: public.transaction
+      balance_after_txn:
+        type: STRING
+        description: Balance after the transaction
+        sourceColumn: balance_after_txn
+        sourceTable: public.transaction
+      description:
+        type: STRING
+        description: Transaction description or remarks
+        sourceColumn: description
+        sourceTable: public.transaction
+  stateStoreType: writeDataFrameToPostgresTable
+  isProfilingEnabled: false
+  updateStrategy: Overwrite
+  connection: Postgres Connection
+  tableName: dw.dp_sadp_acc_dep_transaction_date_filter
+  optional:
+    persistDataFrame: false
+    enableDataReconciliation: false
+    enforceSchema: false
+  refreshInterval: 32 12 * * *
+transformation:
+  - isDynamic: true
+    alias: Spark_SQL_1
+    description: select all columns
+    sequence: 2
+    inputDataFrameList:
+      - inputDataFrame: transaction_-_Accounts_and_Deposits_1
+        tempViewName: temp
+    query: select * from temp
+    optional:
+      persistDataFrame: false
+      loggingOptions:
+        printSchema: true
+        count: true
+        showData: true
+    type: operationThroughSqlQuery
+  - isDynamic: true
+    alias: Filter_1
+    description: filter transaction absed on some date
+    sequence: 3
+    inputDataFrame: Spark_SQL_1
+    filterCondition: txn_date > "2024-10-01"
+    isConditionAsJsonString: false
+    optional:
+      persistDataFrame: false
+      loggingOptions:
+        printSchema: true
+        count: true
+        showData: true
+    type: filterTransform
+controlPort:
+  dataQualityRules: {}
