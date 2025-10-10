@@ -1,0 +1,77 @@
+jobId: "1138"
+jobName: CRDP - Test
+jobType: Consumption Ready Data Product
+developerId: 7679c14a-8908-42a5-8656-2abecbfa4b49
+domain: accounts_deposits
+alias: crdp_suman_copy_writing_al_to_iceberg_
+discoveryPort:
+  name: CRDP - Test
+inputPorts:
+  - alias: User_Master_-_Suman_1
+    isDynamic: true
+    dataProductUrn: urn:dv:dataproduct:9106ea91-cb21-473a-8c83-9e2cd35fcbf0
+    filter: ""
+    projection: ""
+    optional:
+      persistDataFrame: false
+      loggingOptions:
+        printSchema: true
+        count: true
+        showData: true
+    type: dataproduct
+productState:
+  isDynamic: true
+  alias: crdp_suman_copy_writing_al_to_iceberg_
+  retentionVersions: ""
+  logicalSchema:
+    properties:
+      Name:
+        type: STRING
+        description: Name of the user
+        sourceColumn: Name
+        sourceTable: public.data_1
+      Age:
+        type: STRING
+        description: Age of the user
+        sourceColumn: Age
+        sourceTable: public.data_1
+      City:
+        type: STRING
+        description: Location of the user
+        sourceColumn: City
+        sourceTable: public.data_1
+      Occupation:
+        type: STRING
+        description: Profession of the user
+        sourceColumn: Occupation
+        sourceTable: public.data_1
+  stateStoreType: loadDataIceberg
+  isProfilingEnabled: true
+  updateStrategy: Overwrite
+  tableName: iceberg_meta.crdp_suman_copy
+  warehousePath: /data/tmp/iceberg_warehouse_test
+  catalogName: postgres_catalog
+  optional:
+    persistDataFrame: false
+    enableDataReconciliation: false
+    enforceSchema: true
+    enforceSchemaMethod: Warning
+    catalogType: postgres
+  refreshInterval: 33 12 * * *
+transformation:
+  - isDynamic: true
+    alias: Filter_1
+    description: filter based on age
+    sequence: 2
+    inputDataFrame: User_Master_-_Suman_1
+    filterCondition: age > 24
+    isConditionAsJsonString: false
+    optional:
+      persistDataFrame: false
+      loggingOptions:
+        printSchema: true
+        count: true
+        showData: true
+    type: filterTransform
+controlPort:
+  dataQualityRules: {}
