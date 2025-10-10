@@ -3,7 +3,7 @@ jobName: CRDP - Test
 jobType: Consumption Ready Data Product
 developerId: 7679c14a-8908-42a5-8656-2abecbfa4b49
 domain: accounts_deposits
-alias: crdp_suman_copy_writing_al_to_iceberg_
+alias: crdp_suman_copy_writing_al_to_iceberg_5
 discoveryPort:
   name: CRDP - Test
 inputPorts:
